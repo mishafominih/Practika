@@ -58,7 +58,9 @@ void Maze::printMaze() {
 			auto right = m_field[i * n + j].right();
 			auto down = m_field[i * n + j].down();
 			char simvol;
-			if (left && up && right && down)
+			if (down == false && right == false)
+				simvol = '0';
+			else if (left && up && right && down)
 				simvol = 197;
 			else if (left && up && right)
 				simvol = 193;
@@ -76,10 +78,6 @@ void Maze::printMaze() {
 				simvol = 191;
 			else if (down && right)
 				simvol = 218;
-			else if (up || down)
-				simvol = 179;
-			else if (left || right)
-				simvol = 196;
 			else
 				simvol = '0';
 			cout << simvol;

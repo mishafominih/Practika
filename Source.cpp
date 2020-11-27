@@ -1,5 +1,5 @@
 #include "Maze.h"
-
+#include "MTreeNode.h";
 
 
 int main() {
@@ -8,5 +8,7 @@ int main() {
 		mase.makeConnection(i - 1, i, i, i);
 		mase.makeConnection(i, i, i, i + 1);
 	}
+	mase.makeConnection(0, 0, 0, 1);
+	mase.makeConnection(3, 4, 4, 4);
 	mase.printMaze();
 }
