@@ -20,30 +20,42 @@ const MCell& Maze::cell(int i, int j) const {
 }
 
 bool Maze::hasConnection(int i1, int j1, int i2, int j2) {
-	auto i = std::min(i1, i2);
-	auto j = std::min(j1, j2);
-	return m_field[i * n + j].right() || m_field[i * n + j].down();
+	auto min_i = min(i1, i2);
+	auto min_j = min(j1, j2);
+	auto max_i = max(i1, i2);
+	auto max_j = max(j1, j2);
+	auto cell = m_field[min_i * n + min_j];
+	int d = max_i - min_i + max_j - min_j;
+	if (d == 0) 
+		return true;
+	if (d == 1) {
+		if (max_i == min_i)return cell.right();
+		return cell.down();
+	}
+	return min_j == max_j ? hasConnection(min_i + 1, min_j, max_i, max_j) : false ||
+		min_i == max_i ? hasConnection(min_i, min_j + 1, max_i, max_j) : false;
 }
 
 
 bool Maze::makeConnection(int i1, int j1, int i2, int j2) {
-	setConnection(i1, i2, j1, j2, true);
-	return true;
-}
-
-void Maze::setConnection(int& i1, int& i2, int& j1, int& j2, bool connection)
-{
 	auto i = std::min(i1, i2);
 	auto j = std::min(j1, j2);
 	if (i1 == i2)
-		m_field[i * n + j].m_right = connection;
+		m_field[i * n + j].m_right = true;
 	else
-		m_field[i * n + j].m_down = connection;
+		m_field[i * n + j].m_down = true;
+	return true;
 }
 
 bool Maze::removeConnection(int i1, int j1, int i2, int j2) {
-	setConnection(i1, i2, j1, j2, false);
-	return true;
+
+	auto i = std::min(i1, i2);
+	auto j = std::min(j1, j2);
+	if (i1 == i2)
+		m_field[i * n + j].m_right = false;
+	else
+		m_field[i * n + j].m_down = false;
+	return false;
 }
 
 void Maze::printMaze() {
@@ -58,9 +70,7 @@ void Maze::printMaze() {
 			auto right = m_field[i * n + j].right();
 			auto down = m_field[i * n + j].down();
 			char simvol;
-			if (down == false && right == false)
-				simvol = '0';
-			else if (left && up && right && down)
+			if (left && up && right && down)
 				simvol = 197;
 			else if (left && up && right)
 				simvol = 193;
@@ -78,6 +88,10 @@ void Maze::printMaze() {
 				simvol = 191;
 			else if (down && right)
 				simvol = 218;
+			else if (down && up)
+				simvol = 179;
+			else if (left && right)
+				simvol = 196;
 			else
 				simvol = '0';
 			cout << simvol;
