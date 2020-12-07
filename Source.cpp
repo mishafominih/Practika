@@ -2,62 +2,88 @@
 #include "MTreeNode.h";
 #include <iostream>
 #include "Source.h"
+#include <time.h>
 
 using namespace std;
 
-int main() {
-	Maze mase(5, 5);
-	for (int i = 1; i < 4; i++) {
-		mase.makeConnection(i - 1, i, i, i);
-		mase.makeConnection(i, i, i, i + 1);
-	}
-	mase.makeConnection(0, 0, 1, 0);
-	mase.makeConnection(0, 0, 0, 1);
-	mase.makeConnection(1, 1, 2, 1);
-	mase.makeConnection(0, 1, 0, 2);
-	mase.makeConnection(0, 2, 0, 3);
-	mase.makeConnection(2, 3, 2, 4);
-	mase.makeConnection(0, 3, 0, 4);
-	mase.makeConnection(1, 2, 1, 3);
-	mase.makeConnection(1, 3, 1, 4);
-	mase.makeConnection(1, 0, 2, 0);
-	mase.makeConnection(2, 0, 3, 0);
-	mase.makeConnection(2, 1, 3, 1);
-	mase.makeConnection(2, 2, 3, 2);
-	mase.makeConnection(3, 1, 4, 1);
-	mase.makeConnection(3, 2, 4, 2);
-	mase.makeConnection(3, 0, 4, 0);
-	mase.makeConnection(3, 4, 4, 4);
-	mase.makeConnection(3, 3, 4, 3);
-	mase.printMaze();
-
-	auto e = MTreeNode::beginTree(0, 0);
-
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
-			if (i != 0 || j != 0) {
-				if (i != 0 && mase.hasConnection(i - 1, j, i, j))
-					e->hasChild(i - 1, j)->addChild(i, j);
-				else if (j != 0 && mase.hasConnection(i, j - 1, i, j))
-					e->hasChild(i, j - 1)->addChild(i, j);
+void print(MTreeNode* e, int a, int b)
+{
+	int max = 0;
+	int count = 0;
+	int sum = 0;
+	for (int i = 0; i < a; i++)
+		for (int j = 0; j < b; j++) {
+			auto child = e->hasChild(i, j);
+			if (child != nullptr) {
+				int dist = child->distance();
+				if (max < dist)
+					max = dist;
+				count++;
+				sum += dist;
 			}
 		}
-	}
 	cout << endl;
-
-	print(e);
-}
-
-void print(MTreeNode* e)
-{
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
+	for (int i = 0; i < a; i++) {
+		for (int j = 0; j < b; j++) {
 			auto child = e->hasChild(i, j);
-			if (child != nullptr)
-				cout << child->distance();
+			if (child != nullptr) {
+				if(max < 10)
+					printf("%2d", child->distance());
+				else
+					printf("%3d", child->distance());
+			}
 			else
 				cout << 0;
 		}
 		cout << endl;
 	}
+	cout << "max element: " << max << endl;
+	cout << "midle value: " << (double)sum / count << endl;
+}
+
+MTreeNode* searchNode(const MTreeNode& tree, const int i, const int j) {
+	auto parent = &tree;
+	while (parent->parent() != nullptr) {
+		parent = parent->parent();
+	}
+	return ((MTreeNode*)parent)->hasChild(i, j);
+}
+
+void buildFullMaze(Maze& iMaze, MTreeNode& tree) {
+	int i = tree.i();
+	int j = tree.j();
+	for (int i1 = i - 1; i1 <= i + 1; i1++) {
+		for (int j1 = j - 1; j1 <= j + 1; j1++) {
+			if (i1 == i && j1 == j) continue;
+			if (i1 == i || j1 == j) {
+				if (searchNode(tree, i1, j1) == nullptr) {
+					if (iMaze.makeConnection(i, j, i1, j1)) {
+						tree.addChild(i1, j1);
+						buildFullMaze(iMaze, *searchNode(tree, i1, j1));
+					}
+				}
+			}
+		}
+	}
+}
+
+int main() {
+	srand(time(NULL));
+	int a, b;
+	cout << "input size" << endl;
+	cin >> a >> b;
+	Maze mase(a, b);
+	int x, y;
+	x = rand() % a;
+	if (x == 0 || x == a - 1)
+		y = rand() % b;
+	else
+		y = rand() % 2 == 0 ? 0 : b - 1;
+	auto e = MTreeNode::beginTree(x, y);
+
+	buildFullMaze(mase, *e);
+
+	mase.printMaze();
+	print(e, a, b);
+	return 0;
 }
