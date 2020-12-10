@@ -1,9 +1,22 @@
 #include "Maze.h"
 #include "MTreeNode.h";
 #include <iostream>
-#include "Source.h"
 
 using namespace std;
+
+void print(MTreeNode* e)
+{
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			auto child = e->hasChild(i, j);
+			if (child != nullptr)
+				cout << child->distance();
+			else
+				cout << 0;
+		}
+		cout << endl;
+	}
+}
 
 int main() {
 	Maze mase(5, 5);
@@ -46,18 +59,4 @@ int main() {
 	cout << endl;
 
 	print(e);
-}
-
-void print(MTreeNode* e)
-{
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
-			auto child = e->hasChild(i, j);
-			if (child != nullptr)
-				cout << child->distance();
-			else
-				cout << 0;
-		}
-		cout << endl;
-	}
 }

@@ -13,6 +13,7 @@ bool MTreeNode::addChild(int i, int j){
 	MTreeNode* children = new MTreeNode[count];
 	for (int i = 0; i < count - 1; i++)
 		children[i] = m_children[i];
+	delete[] m_children;
 	auto child = new MTreeNode(this);
 	child->m_i = i;
 	child->m_j = j;
@@ -24,7 +25,7 @@ bool MTreeNode::addChild(int i, int j){
 
 MTreeNode* MTreeNode::hasChild(int i, int j){
 	if (m_i == i && m_j == j) return this;
-	for (int ii = 0; ii < 2; ii++) {
+	for (int ii = 0; ii < count; ii++) {
 		if (child(ii) != nullptr) {
 			auto ch = child(ii);
 			ch = ch->hasChild(i, j);
