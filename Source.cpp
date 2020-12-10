@@ -20,28 +20,22 @@ void print(MTreeNode* e)
 
 int main() {
 	Maze mase(5, 5);
-	for (int i = 1; i < 4; i++) {
-		mase.makeConnection(i - 1, i, i, i);
+	for (int i = 0; i < 4; i++) {
+		mase.makeConnection(i, 0, i + 1, 0);
+		mase.makeConnection(i, 1, i + 1, 1);
+		if(i != 0)
+			mase.makeConnection(i - 1, i, i, i);
 		mase.makeConnection(i, i, i, i + 1);
+		if(i != 3)
+			mase.makeConnection(i, i + 1, i, i + 2);
+		if(i < 2)
+			mase.makeConnection(i, i + 2, i, i + 3);
+		if(i > 1)
+			mase.makeConnection(3, i, 4, i);
 	}
-	mase.makeConnection(0, 0, 1, 0);
-	mase.makeConnection(0, 0, 0, 1);
-	mase.makeConnection(1, 1, 2, 1);
-	mase.makeConnection(0, 1, 0, 2);
-	mase.makeConnection(0, 2, 0, 3);
-	mase.makeConnection(2, 3, 2, 4);
 	mase.makeConnection(0, 3, 0, 4);
-	mase.makeConnection(1, 2, 1, 3);
-	mase.makeConnection(1, 3, 1, 4);
-	mase.makeConnection(1, 0, 2, 0);
-	mase.makeConnection(2, 0, 3, 0);
-	mase.makeConnection(2, 1, 3, 1);
 	mase.makeConnection(2, 2, 3, 2);
-	mase.makeConnection(3, 1, 4, 1);
-	mase.makeConnection(3, 2, 4, 2);
-	mase.makeConnection(3, 0, 4, 0);
 	mase.makeConnection(3, 4, 4, 4);
-	mase.makeConnection(3, 3, 4, 3);
 	mase.printMaze();
 
 	auto e = MTreeNode::beginTree(0, 0);
