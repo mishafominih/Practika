@@ -1,7 +1,6 @@
 #include "Maze.h"
 #include "MTreeNode.h";
 #include <iostream>
-#include "Source.h"
 #include <time.h>
 
 using namespace std;
