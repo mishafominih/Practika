@@ -40,6 +40,10 @@ bool Maze::hasConnection(int i1, int j1, int i2, int j2) {
 bool Maze::makeConnection(int i1, int j1, int i2, int j2) {
 	auto i = std::min(i1, i2);
 	auto j = std::min(j1, j2);
+
+	if (i < 0 || j < 0) return false;
+	if (max(i1, i2) >= n || max(j1, j2) >= m)return false;
+	
 	if (i1 == i2)
 		m_field[i * n + j].m_right = true;
 	else
